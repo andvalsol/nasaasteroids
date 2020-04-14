@@ -1,11 +1,6 @@
 package com.udacity.asteroidradar.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity
-data class AsteroidDatabase(
-    @PrimaryKey
+data class AsteroidNetwork(
     val id: Long,
     val codename: String,
     val closeApproachDate: String,
@@ -16,9 +11,10 @@ data class AsteroidDatabase(
     val isPotentiallyHazardous: Boolean,
     val closeApproachDateMillis: Long
 )
-fun List<AsteroidDatabase>.toListDomainModel() =
+
+fun List<AsteroidNetwork>.toListDatabaseModel() =
     this.map {
-        Asteroid(
+        AsteroidDatabase(
             id = it.id,
             codename = it.codename,
             closeApproachDate = it.closeApproachDate,
@@ -26,6 +22,7 @@ fun List<AsteroidDatabase>.toListDomainModel() =
             estimatedDiameter = it.estimatedDiameter,
             relativeVelocity = it.relativeVelocity,
             distanceFromEarth = it.distanceFromEarth,
-            isPotentiallyHazardous = it.isPotentiallyHazardous
+            isPotentiallyHazardous = it.isPotentiallyHazardous,
+            closeApproachDateMillis = it.closeApproachDateMillis
         )
     }
