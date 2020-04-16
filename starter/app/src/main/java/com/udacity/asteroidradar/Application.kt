@@ -23,6 +23,7 @@ class AsteroidApplication : Application() {
 
             val constraints = Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
+                .setRequiresCharging(true)
                 .setRequiredNetworkType(NetworkType.UNMETERED)
                 .apply {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) setRequiresDeviceIdle(true)
