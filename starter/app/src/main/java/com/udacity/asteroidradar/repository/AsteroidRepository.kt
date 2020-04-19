@@ -1,6 +1,5 @@
 package com.udacity.asteroidradar.repository
 
-import android.util.Log
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.api.NasaAPI
@@ -15,20 +14,29 @@ import java.util.*
 
 class AsteroidRepository(private val roomDatabase: AsteroidRoomDatabase) {
 
-    fun getAsteroidsFromStartingDate(startDate: Long) =
-        Transformations.map(roomDatabase.asteroidDao.getAsteroids(startDate)) {
+    private fun Date.formattedApiDate(): String {
+        val formatter = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
+        return formatter.format(this)
+    }
+
+    fun getAsteroidsFromStartingDate() =
+        Transformations.map(roomDatabase.asteroidDao.getAsteroids(Calendar.getInstance().time.formattedApiDate())) {
             it.toListDomainModel()
         }
 
     suspend fun refreshAsteroids() {
         withContext(Dispatchers.IO) {
-            val asteroids =
-                NasaAPI.withScalarsConverter.getAsteroidsAsync(
-                    setStringFormatFromDate(Date()),
-                    setStringFormatFromDate(Date(), plusDays = 7),
-                    Constants.API_KEY
-                ).await()
-            roomDatabase.asteroidDao.insertAll(parseAsteroidsJsonResult(JSONObject(asteroids)))
+            try {
+                val asteroids =
+                    NasaAPI.withScalarsConverter.getAsteroidsAsync(
+                        setStringFormatFromDate(Date()),
+                        setStringFormatFromDate(Date(), plusDays = 7),
+                        Constants.API_KEY
+                    ).await()
+                roomDatabase.asteroidDao.insertAll(parseAsteroidsJsonResult(JSONObject(asteroids)))
+            } catch (e: Exception) {
+                // Handle error
+            }
         }
     }
 
@@ -39,8 +47,6 @@ class AsteroidRepository(private val roomDatabase: AsteroidRoomDatabase) {
         cal.add(Calendar.DATE, plusDays)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-
-        Log.d("Getn", dateFormat.format(cal.time))
 
         return dateFormat.format(cal.time)
     }

@@ -30,7 +30,7 @@ class MainViewModel(application: Application) : AndroidViewModel(Application()) 
     private val asteroidRoomDatabase = getDatabase(application)
     private val asteroidRepository = AsteroidRepository(asteroidRoomDatabase)
 
-    val asteroidsLiveData = asteroidRepository.getAsteroidsFromStartingDate(Date().time)
+    val asteroidsLiveData = asteroidRepository.getAsteroidsFromStartingDate()
 
     init {
         // Get the picture of the day as soon as the ViewModel is created

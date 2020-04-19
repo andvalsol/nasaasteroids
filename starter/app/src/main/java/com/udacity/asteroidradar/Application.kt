@@ -33,7 +33,6 @@ class AsteroidApplication : Application() {
             val periodicWorkRequest =
                 PeriodicWorkRequestBuilder<RefreshAsteroids>(
                     1,
-//                    TimeUnit.MINUTES, => Used for testing purposes
                     TimeUnit.DAYS
                 )
                     .setConstraints(constraints)
